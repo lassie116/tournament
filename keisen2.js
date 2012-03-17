@@ -1,15 +1,15 @@
-var Kei = function(){};
-Kei.Blank = "　 ";
+var K = {};
+K.Blank = "　 ";
 
-Kei.F = "┌";
-Kei.L = "└";
-Kei.H = "─";
-Kei.V = "│";
-Kei.T = "┤";
+K.F = "┌";
+K.L = "└";
+K.H = "─";
+K.V = "│";
+K.T = "┤";
 
-Kei.BF = "┏";
-Kei.BL = "┗";
-Kei.BH = "━";
-Kei.BV = "┃";
-Kei.BT = "┫";
+K.BF = "┏";
+K.BL = "┗";
+K.BH = "━";
+K.BV = "┃";
+K.BT = "┫";
 
