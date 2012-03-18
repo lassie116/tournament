@@ -20,22 +20,13 @@
 
      function handler(ev){
          var tag = ev.target.tagName;
-         switch (tag) {
-         case "A":
-             win(ev);
-             break;
-         case "BUTTON":
-             switch (ev.target.className) {
-             case "add":
+         if (tag == "A") win(ev);
+         if (tag == "BUTTON") {
+             if (ev.target.className == "add") {
                  add_member(parseInt(ev.target.attributes["no"].nodeValue));
-                 draw();
-                 break;
-             case "edit":
-                 edit_members();
-                 draw();
-                 break;
-             }
-             break;
+             } 
+             if (ev.target.className == "edit") edit_members();
+             draw();
          }
      }
 
