@@ -5,24 +5,52 @@
      function $(id) { return document.getElementById(id); };
      
      function init(){
-         $('make').addEventListener("click",shuffle);
-         $('reset').addEventListener("click",make);
-         $('rename').addEventListener("click",
-                                      function(){update_members();draw()});
-         $('area').addEventListener("click",win);
+         $('menu0').style.display = "block";
+         $('menu1').style.display = "none";
+
+         $('make').addEventListener("click",make_tournament);
+         $('shuffle').addEventListener("click",shuffle);
+         $('reset').addEventListener("click",reset);
+         $('edit').addEventListener("click",edit_draw);
+         $('add').addEventListener("click",add_draw);
+         $('cancel').addEventListener("click",draw);
+
+         $('area').addEventListener("click",handler);
      }
 
-     function make_html(idx){
+     function handler(ev){
+         var tag = ev.target.tagName;
+         switch (tag) {
+         case "A":
+             win(ev);
+             break;
+         case "BUTTON":
+             switch (ev.target.className) {
+             case "add":
+                 add_member(parseInt(ev.target.attributes["no"].nodeValue));
+                 draw();
+                 break;
+             case "edit":
+                 edit_members();
+                 draw();
+                 break;
+             }
+             break;
+         }
+     }
+
+     function make_html(idx,leaf_func){
          var self = tree[idx];
          var child0 = tree[idx*2];
          var child1 = tree[idx*2+1];
          if (self == 0 || child0 != undefined || child1 != undefined) {
-             return merge(idx, make_html(idx*2), make_html(idx*2+1));
+             return merge(idx, make_html(idx*2,leaf_func), 
+                          make_html(idx*2+1,leaf_func));
          }
          var name = members[map[self - 1]];
          return {pos: 0,
                  line: [(tree[Math.floor(idx/2)] == self ? K.BH : K.H) +
-                        K.Blank + "<a no="+ self +">" + name + "</a>"]};
+                        K.Blank + leaf_func(self,name)]};
      }
 
      function merge(node, a, b) {
@@ -60,10 +88,45 @@
          }
      }
 
-     function draw(){ $('area').innerHTML = make_html(1).line.join("<br />"); }
+     function _draw(func){
+         $('area').innerHTML = make_html(1,func).line.join("<br />"); 
+     }
+
+     function draw(){ 
+         _draw(normal);
+         function normal(no,name){ return "<a no="+ no +">" + name + "</a>"; }
+     }
+
+     function edit_draw(){
+         _draw(edit_leaf);
+         function edit_leaf(no,name){
+             var e = "<input type='text' no='"+ no +"' value='"+name+"'/>";
+             var b = "<button class='edit'>変更保存</button>"
+             return e + b;
+         }
+     }
+
+     function add_draw(){
+         _draw(add_leaf);
+         function add_leaf(no,name){
+             var n = "<a no="+ no +">" + name + "</a>";
+             var b = "<button no='"+no+"' class='add'>ここに追加</button>"
+             return n + b;
+         }
+     }
+
+     function make_tournament() {
+         $('member').style.display = "none";
+         $('menu0').style.display = "none";
+         $('menu1').style.display = "block";
+         var pre_members = $('member').value.split("\n")
+         members = pre_members.filter(function(e) {return (e != "");});
+         tree = [];
+         make_tree(1,1,members.length);
+         shuffle();
+     }
 
      function shuffle() {
-         update_members();
          map = [];
          for (var i = 0;i < members.length;i++) map[i] = i;
          for (var i = 0;i < members.length - 1;i++) {
@@ -72,20 +135,30 @@
              map[i] = map[i + a];
              map[i + a] = t;
          }
-         make();
+         reset();
      }
 
-     function make() {
-         tree = [];
-         make_tree(1,1,members.length);
-         draw();
+     function edit_members(){
+         var input_list = document.getElementsByTagName("INPUT");
+         for (var i = 0;i<input_list.length;i++){
+             var attr = input_list[i].attributes["no"];
+             if (attr == undefined) continue;
+             var no = parseInt(attr.nodeValue);
+             var idx = map[no-1];
+             members[idx] = input_list[i].value;
+         }
      }
 
-     function update_members(){
-         var pre_members = $('member').value.split("\n")
-         members = pre_members.filter(function(e) {return (e != "");});
+     function add_member(src){
+         var leaf = tree.lastIndexOf(src);
+         members.push("新規メンバ");
+         var idx = members.length;
+         tree[leaf*2] = tree[leaf];
+         tree[leaf*2+1] = idx;
+         tree[leaf] = 0;
+         map[idx-1] = idx-1;
      }
-     
+
      function win(ev) {
          var attr = ev.target.attributes;
          if (attr["no"] == undefined) return;
@@ -98,6 +171,15 @@
                  break;
              } 
              node = Math.floor(node / 2);
+         }
+         draw();
+     }
+
+     function reset(){
+         for (var i = 0;i<tree.length;i++){
+             if (tree[i] == undefined || tree[i] == 0) continue;
+             if (tree[i*2] == undefined && tree[i*2+1] == undefined) continue;
+             tree[i] = 0;
          }
          draw();
      }

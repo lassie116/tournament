@@ -5,12 +5,20 @@
 </head>
 <body>
 <h1>トーナメント表AA作成ツール その2</h1>
-lassie制作,とんびさんプロデュースのトーナメント表AA作成ツールその2です。とんびさんが数十行で書けというので試みましたが100行切れませんでした。ごめんなさい。使い方は<a href="">前の</a>と同じです。掲示板などにコピペしてお使いください。
+lassie制作,とんびさんプロデュースのトーナメント表AA作成ツールその2です。とんびさんが数十行で書けというので試みましたが100行切れませんでした。ついでに機能を追加して180行ほどになりました。使い方は体で覚えてください。
 <hr>
-<button id="make">作成/シャッフル</button>
-<button id="reset">勝敗リセット</button>
+<p id="menu0">
+  <button id="make">トーナメント表作成</button>
+</p>
+<p id="menu1">
+  <button id="shuffle">シャッフル</button>
+  <button id="reset">勝敗リセット</button>
+  <button id="edit">名前編集</button>
+  <button id="add">メンバ追加</button>
+  <button id="cancel">キャンセル</button>
+</p>
+<hr>
 <div id="area"></div>
-<hr>
 <textarea id="member" cols="20" rows="14">一人目
 二人目
 三人目
@@ -18,7 +26,6 @@ lassie制作,とんびさんプロデュースのトーナメント表AA作成�
 五人目
 六人目
 七人目</textarea>
-<button id="rename">名前を変更する</button>
 <script language="javascript" src="keisen2.js"></script>
 <script language="javascript" src="tournament.js"></script>
 </body>
