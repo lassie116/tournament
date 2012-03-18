@@ -13,7 +13,6 @@
          $('reset').addEventListener("click",reset);
          $('edit').addEventListener("click",edit_draw);
          $('add').addEventListener("click",add_draw);
-         $('cancel').addEventListener("click",draw);
 
          $('area').addEventListener("click",handler);
      }
@@ -93,7 +92,8 @@
          function edit_leaf(no,name){
              var e = "<input type='text' no='"+ no +"' value='"+name+"'/>";
              var b = "<button class='edit'>変更保存</button>"
-             return e + b;
+             var c = "<button>キャンセル</button>"
+             return e + b + c;
          }
      }
 
@@ -102,7 +102,8 @@
          function add_leaf(no,name){
              var n = "<a no="+ no +">" + name + "</a>";
              var b = "<button no='"+no+"' class='add'>ここに追加</button>"
-             return n + b;
+             var c = "<button>キャンセル</button>"
+             return n + b + c;
          }
      }
 
