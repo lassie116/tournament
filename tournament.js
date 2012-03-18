@@ -23,9 +23,13 @@
          if (tag == "BUTTON") {
              if (ev.target.className == "add") {
                  add_member(parseInt(ev.target.attributes["no"].nodeValue));
-             } 
-             if (ev.target.className == "edit") edit_members();
-             draw();
+                 edit_draw();
+             } else if (ev.target.className == "edit") {
+                 edit_members();
+                 draw();
+             } else {
+                 draw();
+             }
          }
      }
 
