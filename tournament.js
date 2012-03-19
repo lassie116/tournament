@@ -1,18 +1,16 @@
 (function () {
      var member_list,tree,no2idx;
      window.onload = init;
-
-     function $(id) { return document.getElementById(id); };
      
      function init(){
-         $('menu0').style.display = "block";
-         $('menu1').style.display = "none";
-         $('make').addEventListener("click",make_tournament);
-         $('shuffle').addEventListener("click",shuffle);
-         $('reset').addEventListener("click",reset);
-         $('edit').addEventListener("click",edit_draw);
-         $('cancel').addEventListener("click",draw);
-         $('area').addEventListener("click",handler);
+         $('#menu0').show();
+         $('#menu1').hide();
+         $('#make').click(make_tournament);
+         $('#shuffle').click(shuffle);
+         $('#reset').click(reset);
+         $('#edit').click(edit_draw);
+         $('#cancel').click(draw);
+         $('#area').click(handler);
      }
 
      function handler(ev){
@@ -87,7 +85,7 @@
      }
 
      function _draw(func){
-         $('area').innerHTML = make_html(1,func).join("<br />"); 
+         $('#area')[0].innerHTML = make_html(1,func).join("<br />"); 
      }
 
      function draw(){ 
@@ -107,10 +105,10 @@
      }
 
      function make_tournament() {
-         $('member').style.display = "none";
-         $('menu0').style.display = "none";
-         $('menu1').style.display = "block";
-         var pre_members = $('member').value.split("\n")
+         $('#member').hide();
+         $('#menu0').hide();
+         $('#menu1').show();
+         var pre_members = $('#member')[0].value.split("\n")
          member_list = pre_members.filter(function(e) {return (e != "");});
          tree = [];
          make_tree(1,1,member_list.length);
