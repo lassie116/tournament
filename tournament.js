@@ -105,11 +105,16 @@
      }
 
      function make_tournament() {
-         $('#member').hide();
+         //$('#member').hide();
          $('#menu0').hide();
          $('#menu1').show();
          var pre_members = $('#member')[0].value.split("\n")
-         member_list = pre_members.filter(function(e) {return (e != "");});
+         member_list = [];
+         for (var i = 0;i < pre_members.length;i++){
+             if (pre_members[i] != "") {
+                 member_list.push(pre_members[i]);
+             }
+         }
          tree = [];
          make_tree(1,1,member_list.length);
          shuffle();
