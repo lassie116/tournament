@@ -20,12 +20,11 @@
              if (ev.target.className == "add") {
                  add_member(parseInt(ev.target.attributes["no"].nodeValue));
                  edit_draw();
-             } else {
-                 if (ev.target.className == "delete") {
+             } else if (ev.target.className == "delete") {
                  delete_member(parseInt(ev.target.attributes["no"].nodeValue));
-                 } else if (ev.target.className == "edit") {
-                     update_name();
-                 }
+                 edit_draw();
+             } else if (ev.target.className == "edit") {
+                 update_name();
                  draw();
              }
          }
@@ -97,7 +96,7 @@
          _draw(edit_leaf);
          function edit_leaf(no,name){
              var n = "<input type='text' no='"+ no +"' value='"+name+"'/>";
-             var e = "<button class='edit'>更新</button>"
+             var e = "<button class='edit'>名前保存</button>"
              var a = "<button no='"+no+"' class='add'>対戦相手追加</button>"
              var d = "<button no='"+no+"' class='delete'>削除</button>"
              return n + e + a + d;
