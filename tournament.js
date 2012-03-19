@@ -157,9 +157,26 @@
          no2idx[no] = undefined;
          var leaf = tree.lastIndexOf(no);
          var p = Math.floor(leaf/2);
-         tree[p] = tree[p*2] == no ? tree[p*2+1] : tree[p*2];
-         tree[p*2] = undefined;
-         tree[p*2+1] = undefined;
+         var from;
+         if (tree[p*2] == no) {
+             from = p*2+1;
+         } else {
+             from = p*2;
+         }
+
+         var buff = [];
+         for (var i = 0;i<tree.length;i++){
+             buff[i] = tree[i];
+         }
+         move_rec(p,from);
+
+         function move_rec(to,from){
+             tree[to] = buff[from];
+             if (tree[from] != undefined) {
+                 move_rec(to*2,from*2);
+                 move_rec(to*2+1,from*2+1);
+             }
+         }
      }
 
      function win(ev) {
