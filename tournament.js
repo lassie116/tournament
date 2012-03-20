@@ -10,97 +10,7 @@
          $('#reset').click(reset);
          $('#edit').click(edit_draw);
          $('#cancel').click(draw);
-         $('#area').click(handler);
-     }
-
-     function handler(ev){
-         var tag = ev.target.tagName;
-         if (tag == "A") win(ev);
-         if (tag == "BUTTON") {
-             if (ev.target.className == "add") {
-                 add_member(parseInt(ev.target.attributes["no"].nodeValue));
-                 edit_draw();
-             } else if (ev.target.className == "delete") {
-                 delete_member(parseInt(ev.target.attributes["no"].nodeValue));
-                 edit_draw();
-             } else if (ev.target.className == "edit") {
-                 update_name();
-                 draw();
-             }
-         }
-     }
-
-     function make_html(idx,f){
-         var self_no = tree[idx];
-         var child0 = tree[idx*2];
-         var child1 = tree[idx*2+1];
-         if (self_no == 0 || child0 != undefined || child1 != undefined) {
-             // branch
-             return merge(idx, make_html(idx*2,f), make_html(idx*2+1,f));
-         }
-         // leaf
-         var name = member_list[no2idx[self_no]];
-         return [(tree[Math.floor(idx/2)] == self_no ? K.BH : K.H) +
-                 K.Blank + f(self_no,name)];
-     }
-
-     function merge(node, a, b) {
-         var self = tree[node];
-         var new_a = merge_aux(self != 0 && self == tree[node*2], true, a);
-         var new_b = merge_aux(self != 0 && self == tree[node*2+1], false, b);
-         var joint = [self != 0 ? (K.BH + K.BT) : (K.H + K.T)];
-         return new_a.concat(joint,new_b);
-     }
-
-     function merge_aux(is_bold, up, list) {
-         var result = [];
-         var state = "upside";
-         for (var i = 0;i < list.length;i++){
-             var line = list[i];
-             var t;
-             if (state == "downside") {
-                 t = up ? (is_bold ? K.BV : K.V) : K.Blank;
-             } else if (line[0] == K.H || line[0] == K.BH) {
-                 t = up ? (is_bold ? K.BF : K.F) : (is_bold ? K.BL : K.L);
-                 state = "downside";
-             } else {
-                 t = up ? K.Blank : (is_bold ? K.BV : K.V); 
-             }
-             result.push(K.Blank + t + line);
-         }
-         return result;
-     }
-     
-     function make_tree(n,start,end){
-         var size = end - start + 1;
-         if (size == 1) { // leaf
-             tree[n] = start;
-         } else {
-             var mid = Math.ceil(size/2);
-             tree[n] = 0;
-             make_tree(n*2,start,start+mid-1);
-             make_tree(n*2+1,start+mid,end);
-         }
-     }
-
-     function _draw(func){
-         $('#area')[0].innerHTML = make_html(1,func).join("<br />"); 
-     }
-
-     function draw(){ 
-         _draw(normal);
-         function normal(no,name){ return "<a no="+ no +">" + name + "</a>"; }
-     }
-
-     function edit_draw(){
-         _draw(edit_leaf);
-         function edit_leaf(no,name){
-             var n = "<input type='text' no='"+ no +"' value='"+name+"'/>";
-             var e = "<button class='edit'>名前保存</button>"
-             var a = "<button no='"+no+"' class='add'>対戦相手追加</button>"
-             var d = "<button no='"+no+"' class='delete'>削除</button>"
-             return n + e + a + d;
-         }
+         $('#area').click(edit_handlers);
      }
 
      function make_tournament() {
@@ -112,6 +22,18 @@
          tree = [];
          make_tree(1,1,member_list.length);
          shuffle();
+
+         function make_tree(n,start,end){
+             var size = end - start + 1;
+             if (size == 1) { // leaf
+                 tree[n] = start;
+             } else {
+                 var mid = Math.ceil(size/2);
+                 tree[n] = 0;
+                 make_tree(n*2,start,start+mid-1);
+                 make_tree(n*2+1,start+mid,end);
+             }
+         }
      }
 
      function shuffle() {
@@ -130,6 +52,15 @@
              no2idx[i + a + 1] = t;
          }
          reset();
+     }
+
+     function reset(){
+         for (var i = 0;i<tree.length;i++){
+             if (tree[i] == undefined || tree[i] == 0) continue;
+             if (tree[i*2] == undefined && tree[i*2+1] == undefined) continue;
+             tree[i] = 0;
+         }
+         draw();
      }
 
      function update_name(){
@@ -164,17 +95,31 @@
              from = p*2;
          }
 
-         var buff = [];
-         for (var i = 0;i<tree.length;i++){
-             buff[i] = tree[i];
-         }
+         var old_tree = tree.slice(0); // Array copy
          move_rec(p,from);
 
          function move_rec(to,from){
-             tree[to] = buff[from];
+             tree[to] = old_tree[from];
              if (tree[from] != undefined) {
                  move_rec(to*2,from*2);
                  move_rec(to*2+1,from*2+1);
+             }
+         }
+     }
+
+     function edit_handlers(ev){
+         var tag = ev.target.tagName;
+         if (tag == "A") win(ev);
+         if (tag == "BUTTON") {
+             if (ev.target.className == "add") {
+                 add_member(parseInt(ev.target.attributes["no"].nodeValue));
+                 edit_draw();
+             } else if (ev.target.className == "delete") {
+                 delete_member(parseInt(ev.target.attributes["no"].nodeValue));
+                 edit_draw();
+             } else if (ev.target.className == "edit") {
+                 update_name();
+                 draw();
              }
          }
      }
@@ -195,12 +140,72 @@
          draw();
      }
 
-     function reset(){
-         for (var i = 0;i<tree.length;i++){
-             if (tree[i] == undefined || tree[i] == 0) continue;
-             if (tree[i*2] == undefined && tree[i*2+1] == undefined) continue;
-             tree[i] = 0;
-         }
-         draw();
+     function draw(){ 
+         _draw(normal);
+         function normal(no,name){ return "<a no="+ no +">" + name + "</a>"; }
      }
+
+     function edit_draw(){
+         _draw(edit_leaf);
+         function edit_leaf(no,name){
+             var n = "<input type='text' no='"+ no +"' value='"+name+"'/>";
+             var e = "<button class='edit'>名前保存</button>"
+             var a = "<button no='"+no+"' class='add'>対戦相手追加</button>"
+             var d = "<button no='"+no+"' class='delete'>削除</button>"
+             return n + e + a + d;
+         }
+     }
+
+     function _draw(make_leaf_func){
+         var html_list = make_html(1,make_leaf_func);
+         $('#area')[0].innerHTML = html_list.join("<br />");
+     }
+
+     function make_html(idx,make_leaf){
+         var self_no = tree[idx];
+         var parent = tree[Math.floor(idx/2)];
+         var upper_child = tree[idx*2];
+         var lower_child = tree[idx*2+1];
+
+         // leaf
+         if (self_no != 0 && 
+             upper_child == undefined && lower_child == undefined) {
+             var leaf_html = make_leaf(self_no,member_list[no2idx[self_no]]);
+             return [(parent == self_no ? K.BH : K.H) + K.Blank + leaf_html];
+         }
+
+         // branch
+         var self_is_bold = self_no != 0;
+         var upper_is_bold = self_is_bold && self_no == upper_child;
+         var lower_is_bold = self_is_bold && self_no == lower_child;
+
+         var upper = make_html(idx*2,make_leaf);
+         var lower = make_html(idx*2+1,make_leaf);
+         var new_upper = add_vline(upper,true,upper_is_bold);
+         var new_lower = add_vline(lower,false,lower_is_bold);
+
+         var joint = [self_is_bold ? (K.BH + K.BT) : (K.H + K.T)];
+         return new_upper.concat(joint,new_lower);
+
+         function add_vline(list,upper,is_bold) {
+             var result = [];
+             var V = (is_bold ? K.BV : K.V);
+             var L = (is_bold ? K.BL : K.L);
+             var F = (is_bold ? K.BF : K.F);
+             var state = "upside";
+             for (var i = 0;i < list.length;i++){
+                 var line = list[i];
+                 if (line[0] == K.H || line[0] == K.BH) {
+                     result.push(K.Blank + (upper ? F : L) + line);
+                     state = "downside";
+                 } else if (state == "upside") {
+                     result.push(K.Blank + (upper ? K.Blank : V) + line);
+                 } else if (state == "downside") {
+                     result.push(K.Blank + (upper ? V : K.Blank) + line);
+                 }
+             }
+             return result;
+         }
+     }
+     
 }());
