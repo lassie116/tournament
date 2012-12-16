@@ -18,6 +18,8 @@
      function check_hashcode(){
          if (location.hash != "") {
              restore_state(location.hash);
+             $('#menu0').hide();
+             $('#menu1').show();
              draw();
          }
      }
