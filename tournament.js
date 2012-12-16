@@ -218,7 +218,9 @@
 
      function _draw(make_leaf_func){
          var html_list = make_html(1,make_leaf_func);
-         html_list.unshift(make_url());
+         var url = make_url();
+         html_list.unshift(url);
+         location.hash = url;
          $('#area')[0].innerHTML = html_list.join("<br />");
      }
 
