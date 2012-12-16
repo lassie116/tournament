@@ -1,11 +1,11 @@
 (function () {
      var member_list,tree,no2idx;
-     window.onload = init;
      
      function init(){
          $('#menu0').show();
          $('#menu1').hide();
          $('#make').click(make_tournament);
+         $('#just_make').click(just_make_tournament);
          $('#shuffle').click(shuffle);
          $('#reset').click(reset);
          $('#edit').click(edit_draw);
@@ -13,7 +13,15 @@
          $('#area').click(edit_handlers);
      }
 
-     function make_tournament() {
+     function just_make_tournament(){
+         _make_tournament(false);
+     }
+
+     function make_tournament(){
+         _make_tournament(true);
+     }
+
+     function _make_tournament(shuffle_on) {
          //$('#member').hide();
          $('#menu0').hide();
          $('#menu1').show();
@@ -21,7 +29,11 @@
          member_list = pre_members.filter(function(e) {return (e != "");});
          tree = [];
          make_tree(1,1,member_list.length);
-         shuffle();
+         setup_no2idx();
+         if (shuffle_on) {
+             shuffle_idx();
+         }
+         reset();
 
          function make_tree(n,start,end){
              var size = end - start + 1;
@@ -36,11 +48,19 @@
          }
      }
 
-     function shuffle() {
+     function setup_no2idx(){
          if (no2idx == undefined) {
              no2idx = {};
              for (var i = 0;i < member_list.length;i++) no2idx[i+1] = i;
          }
+     }
+
+     function shuffle(){
+         shuffle_idx();
+         reset();
+     }
+
+     function shuffle_idx() {
          for (var i = 0;i < member_list.length - 1;i++) {
              if (no2idx[i+1] == undefined) continue;
              var a;
@@ -51,7 +71,6 @@
              no2idx[i+1] = no2idx[i + a + 1];
              no2idx[i + a + 1] = t;
          }
-         reset();
      }
 
      function reset(){
@@ -208,4 +227,5 @@
          }
      }
      
+     init();
 }());
