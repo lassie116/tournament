@@ -226,7 +226,7 @@
      function make_url(){
          var hashcode = state_to_base64();
          var href = location.href + "#" + hashcode;
-         locatin.hash = hashcode;
+         location.hash = hashcode;
          var ar = [
              "<a href=\"",
              href,
