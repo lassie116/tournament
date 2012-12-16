@@ -220,13 +220,13 @@
          var html_list = make_html(1,make_leaf_func);
          var url = make_url();
          html_list.unshift(url);
-         location.hash = url;
          $('#area')[0].innerHTML = html_list.join("<br />");
      }
 
      function make_url(){
-         //var str = "tournament.html#";
-         var href = location.href + "#" + state_to_base64();
+         var hashcode = state_to_base64();
+         var href = location.href + "#" + hashcode;
+         locatin.hash = hashcode;
          var ar = [
              "<a href=\"",
              href,
