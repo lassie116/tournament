@@ -11,6 +11,47 @@
          $('#edit').click(edit_draw);
          $('#cancel').click(draw);
          $('#area').click(edit_handlers);
+
+         check_hashcode();
+     }
+
+     function check_hashcode(){
+         if (location.hash != "") {
+             restore_state(location.hash);
+             draw();
+         }
+     }
+
+     function restore_state(base64){
+         var obj = base64_to_state(base64);
+         member_list = obj.member_list;
+         tree = obj.tree;
+         no2idx = obj.no2idx;
+
+         $('#member')[0].value = member_list.join("\n");
+     }
+
+     function state_to_base64(){
+         var obj = {
+             member_list:member_list,
+             tree:tree,
+             no2idx:no2idx
+         };
+         var pack = msgpack.pack(obj);
+         // to string
+         var bstr = String.fromCharCode.apply(null,pack);
+         var base64 = base64encode(bstr);
+         return base64;
+     }
+
+     function base64_to_state(base64) {
+         var bstr2 = base64decode(base64);
+         var pack2 = [];
+         for (var i = 0;i<bstr2.length;++i){
+             pack2.push(bstr2.charCodeAt(i));
+         }
+         var obj2 = msgpack.unpack(pack2);
+         return obj2;
      }
 
      function just_make_tournament(){
@@ -177,7 +218,21 @@
 
      function _draw(make_leaf_func){
          var html_list = make_html(1,make_leaf_func);
+         html_list.unshift(make_url());
          $('#area')[0].innerHTML = html_list.join("<br />");
+     }
+
+     function make_url(){
+         //var str = "tournament.html#";
+         var href = location.href + "#" + state_to_base64();
+         var ar = [
+             "<a href=\"",
+             href,
+             "\">",
+             href,
+             "</a>"
+         ];
+         return ar.join("");
      }
 
      function make_html(idx,make_leaf){
