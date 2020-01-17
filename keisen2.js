@@ -1,5 +1,5 @@
 var K = {};
-K.Blank = "　 ";
+K.Blank = "　";
 
 K.F = "┌";
 K.L = "└";
